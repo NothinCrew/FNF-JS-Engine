@@ -276,7 +276,7 @@ class PlayState extends MusicBeatState
 	inline function set_cpuControlled(value:Bool){
 		cpuControlled = value;
 		if (botplayTxt != null && !ClientPrefs.showcaseMode) // this assures it'll always show up
-			botplayTxt.visible = (!ClientPrefs.hideHud) ? cpuControlled : false;
+			botplayTxt.visible = (!ClientPrefs.hideHud && ClientPrefs.botTxtStyle != 'Hide') ? cpuControlled : false;
 
 		return cpuControlled;
 	}
@@ -1316,7 +1316,6 @@ class PlayState extends MusicBeatState
 				case 'Leather Engine': 'bfleather';
 				case "Mic'd Up": 'bfmup';
 				case "FPS Plus": 'bffps';
-				case "SB Engine": 'bfsb';
 				case "OS 'Engine'": 'bfos';
 				default: 'bf';
 			}
@@ -1611,9 +1610,8 @@ class PlayState extends MusicBeatState
 			Paths.music(Paths.formatToSongPath(ClientPrefs.pauseMusic));
 
 		if(cpuControlled && ClientPrefs.randomBotplayText && ClientPrefs.botTxtStyle != 'Hide' && botplayTxt != null && ffmpegInfo != 'Frame Time')
-		{
 			botplayTxt.text = theListBotplay[FlxG.random.int(0, theListBotplay.length - 1)];
-		}
+
 		if (botplayTxt != null) ogBotTxt = botplayTxt.text;
 		
 		resetRPC();
@@ -2150,28 +2148,31 @@ class PlayState extends MusicBeatState
 		});
 	}
 
+	var fps:Float = 60;
+	var bfCanPan:Bool = false;
+	var dadCanPan:Bool = false;
+	var doPan:Bool = false;
 	function camPanRoutine(anim:String = 'singUP', who:String = 'bf'):Void {
 		if (SONG.notes[curSection] != null)
 		{
-		var fps:Float = FlxG.updateFramerate;
-		final bfCanPan:Bool = SONG.notes[curSection].mustHitSection;
-		final dadCanPan:Bool = !SONG.notes[curSection].mustHitSection;
-		var clear:Bool = false;
-		switch (who) {
-			case 'bf' | 'boyfriend': clear = bfCanPan;
-			case 'oppt' | 'dad': clear = dadCanPan;
-		}
-		//FlxG.elapsed is stinky poo poo for this, it just makes it look jank as fuck
-		if (clear) {
-			if (fps == 0) fps = 1;
-			switch (anim.split('-')[0])
-			{
-				case 'singUP': moveCamTo[1] = -40*ClientPrefs.panIntensity*240*playbackRate/fps;
-				case 'singDOWN': moveCamTo[1] = 40*ClientPrefs.panIntensity*240*playbackRate/fps;
-				case 'singLEFT': moveCamTo[0] = -40*ClientPrefs.panIntensity*240*playbackRate/fps;
-				case 'singRIGHT': moveCamTo[0] = 40*ClientPrefs.panIntensity*240*playbackRate/fps;
+			fps = FlxG.updateFramerate;
+			bfCanPan = SONG.notes[curSection].mustHitSection;
+			dadCanPan = !SONG.notes[curSection].mustHitSection;
+			switch (who) {
+				case 'bf' | 'boyfriend': doPan = bfCanPan;
+				case 'oppt' | 'dad': doPan = dadCanPan;
 			}
-		}
+			//FlxG.elapsed is stinky poo poo for this, it just makes it look jank as fuck
+			if (doPan) {
+				if (fps == 0) fps = 1;
+				switch (anim.split('-')[0])
+				{
+					case 'singUP': moveCamTo[1] = -40*ClientPrefs.panIntensity*240*playbackRate/fps;
+					case 'singDOWN': moveCamTo[1] = 40*ClientPrefs.panIntensity*240*playbackRate/fps;
+					case 'singLEFT': moveCamTo[0] = -40*ClientPrefs.panIntensity*240*playbackRate/fps;
+					case 'singRIGHT': moveCamTo[0] = 40*ClientPrefs.panIntensity*240*playbackRate/fps;
+				}
+			}
 		}
 	}
 
@@ -2845,9 +2846,11 @@ class PlayState extends MusicBeatState
 							case 0:
 								var boyfriendToGrab:Boyfriend = boyfriendMap.get(charChangeNames[0]);
 								if (boyfriendToGrab != null && boyfriendToGrab.noteskin.length > 0) bfNoteskin = boyfriendToGrab.noteskin;
+								else bfNoteskin = '';
 							case 1:
 								var dadToGrab:Character = dadMap.get(charChangeNames[0]);
 								if (dadToGrab != null && dadToGrab.noteskin.length > 0) dadNoteskin = dadToGrab.noteskin;
+								else dadNoteskin = '';
 						}
 						charChangeTimes.shift();
 						charChangeNames.shift();
@@ -2924,9 +2927,9 @@ class PlayState extends MusicBeatState
 				
 					var ratio:Float = Conductor.bpm / currentBPMLol;
 		
-					final floorSus:Int = Math.floor(swagNote.sustainLength / Conductor.stepCrochet);
-					if (floorSus > 0) {
-						for (susNote in 0...floorSus + 1) {
+					final roundSus:Int = Math.round(swagNote.sustainLength / Conductor.stepCrochet);
+					if (roundSus > 0) {
+						for (susNote in 0...roundSus + 1) {
 
 							final sustainNote:PreloadedChartNote = cast {
 								strumTime: daStrumTime + (Conductor.stepCrochet * susNote),
@@ -2939,7 +2942,7 @@ class PlayState extends MusicBeatState
 								gfNote: songNotes[3] == 'GF Sing' || (section.gfSection && songNotes[1] < 4),
 								noAnimation: songNotes[3] == 'No Animation',
 								isSustainNote: true,
-								isSustainEnd: susNote == floorSus,
+								isSustainEnd: susNote == roundSus,
 								sustainScale: 1 / ratio,
 								parentST: swagNote.strumTime,
 								parentSL: swagNote.sustainLength,
@@ -2994,11 +2997,11 @@ class PlayState extends MusicBeatState
 
 		sectionsLoaded = 0;
 
-		var endTime = haxe.Timer.stamp();
+		final endTime = haxe.Timer.stamp();
 
 		openfl.system.System.gc();
 
-		var elapsedTime = endTime - startTime;
+		final elapsedTime = endTime - startTime;
 
 		trace('\nDone! \n\nTime taken: ' + CoolUtil.formatTime(elapsedTime * 1000) + "\nAverage NPS while loading: " + Math.floor(notesLoadedRN / elapsedTime));
 		notesLoadedRN = 0;
@@ -3834,6 +3837,7 @@ class PlayState extends MusicBeatState
 						spawnedNote = (unspawnNotes[notesAddedCount].isSustainNote ? sustainNotes : notes).recycle(Note);
 						spawnedNote.setupNoteData(unspawnNotes[notesAddedCount]);
 					}
+
 					if (!ClientPrefs.noSpawnFunc) callOnLuas('onSpawnNote', [(!unspawnNotes[notesAddedCount].isSustainNote ? notes.members.indexOf(notes.members[0]) : sustainNotes.members.indexOf(sustainNotes.members[0])), unspawnNotes[notesAddedCount].noteData, unspawnNotes[notesAddedCount].noteType, unspawnNotes[notesAddedCount].isSustainNote]);
 					notesAddedCount++;
 				}
@@ -4008,7 +4012,7 @@ class PlayState extends MusicBeatState
 			iconP1.offset.y = Math.abs(Math.sin(funnyBeat * Math.PI))  * 16 - 4;
 			iconP2.offset.y = Math.abs(Math.sin(funnyBeat * Math.PI))  * 16 - 4;
 		}
-		if (ClientPrefs.iconBounceType == 'New Psych' || ClientPrefs.iconBounceType == 'SB Engine' || ClientPrefs.iconBounceType == 'VS Steve') {
+		if (ClientPrefs.iconBounceType == 'New Psych' || ClientPrefs.iconBounceType == 'VS Steve') {
 			final mult:Float = FlxMath.lerp(1, iconP1.scale.x, CoolUtil.boundTo(1 - (elapsed * 9 * playbackRate), 0, 1));
 			iconP1.scale.set(mult, mult);
 			iconP1.updateHitbox();
@@ -4022,43 +4026,24 @@ class PlayState extends MusicBeatState
 			iconP1.centerOffsets();
 			iconP2.centerOffsets();
 		}
-		//you're welcome Stefan2008 :)
-		if (ClientPrefs.iconBounceType == 'SB Engine') {
-			if (iconP1.angle >= 0) {
-				if (iconP1.angle != 0) {
-					iconP1.angle -= 1 * playbackRate;
-				}
-			} else {
-				if (iconP1.angle != 0) {
-					iconP1.angle += 1 * playbackRate;
-				}
-			}
-			if (iconP2.angle >= 0) {
-				if (iconP2.angle != 0) {
-					iconP2.angle -= 1 * playbackRate;
-				}
-			} else {
-				if (iconP2.angle != 0) {
-					iconP2.angle += 1 * playbackRate;
-				}
-			}
-		}
 		iconP1.updateHitbox();
 		iconP2.updateHitbox();
 	}
 
+	var percent:Float = 0;
+	var center:Float = 0;
 	public dynamic function updateIconsPosition()
 	{
 		if (ClientPrefs.smoothHealth)
 		{
-			final percent:Float = 1 - (ClientPrefs.smoothHPBug ? (displayedHealth / maxHealth) : (FlxMath.bound(displayedHealth, 0, maxHealth) / maxHealth));
+			percent = 1 - (ClientPrefs.smoothHPBug ? (displayedHealth / maxHealth) : (FlxMath.bound(displayedHealth, 0, maxHealth) / maxHealth));
 
 			iconP1.x = 0 + healthBar.x + (healthBar.width * percent) + (150 * iconP1.scale.x - 150) / 2 - iconOffset;
 			iconP2.x = 0 + healthBar.x + (healthBar.width * percent) - (150 * iconP2.scale.x) / 2 - iconOffset * 2;
 		}
 		else //mb forgot to include this
 		{
-			final center:Float = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 100, 0) * 0.01));
+			center = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 100, 0) * 0.01));
 			iconP1.x = center + (150 * iconP1.scale.x - 150) / 2 - iconOffset;
 			iconP2.x = center - (150 * iconP2.scale.x) / 2 - iconOffset * 2;
 		}
@@ -4481,10 +4466,10 @@ class PlayState extends MusicBeatState
 								if (ClientPrefs.bfIconStyle == 'Leather Engine') iconP1.changeIcon('bfleather');
 								if (ClientPrefs.bfIconStyle == "Mic'd Up") iconP1.changeIcon('bfmup');
 								if (ClientPrefs.bfIconStyle == "FPS Plus") iconP1.changeIcon('bffps');
-								if (ClientPrefs.bfIconStyle == "SB Engine") iconP1.changeIcon('bfsb');
 								if (ClientPrefs.bfIconStyle == "OS 'Engine'") iconP1.changeIcon('bfos');
 							}
 							if (boyfriend.noteskin.length > 0) bfNoteskin = boyfriend.noteskin;
+							else bfNoteskin = '';
 						}
 						setOnLuas('boyfriendName', boyfriend.curCharacter);
 
@@ -4513,12 +4498,13 @@ class PlayState extends MusicBeatState
 								
 								if (scoreTxt != null && !ClientPrefs.hideHud) FlxTween.color(scoreTxt, 1, scoreTxt.color, FlxColor.fromRGB(dad.healthColorArray[0], dad.healthColorArray[1], dad.healthColorArray[2]));
 							}
-							if (ClientPrefs.scoreStyle == 'JS Engine' && !ClientPrefs.hideHud) {
+							if (ClientPrefs.scoreStyle == 'JS Engine' && !ClientPrefs.hideHud)
 								if (scoreTxt != null) FlxTween.color(scoreTxt, 1, scoreTxt.color, FlxColor.fromRGB(dad.healthColorArray[0], dad.healthColorArray[1], dad.healthColorArray[2]));
-							}
+
 							if (dadAnim != '') dad.playAnim(dadAnim, true);
 						}
 							if (dad.noteskin.length > 0) dadNoteskin = dad.noteskin;
+							else dadNoteskin = '';
 						setOnLuas('dadName', dad.curCharacter);
 
 					case 2:
@@ -4546,10 +4532,10 @@ class PlayState extends MusicBeatState
 				if (ClientPrefs.showNotes)
 				{
 					for (i in strumLineNotes.members)
-						if ((i.player == 0 ? dadNoteskin : bfNoteskin).length > 0) 
+						if ((i.player == 0 ? dadNoteskin : bfNoteskin) != null) 
 						{
 							i.updateNoteSkin(i.player == 0 ? dadNoteskin : bfNoteskin);
-							i.useRGBShader = false;
+							i.useRGBShader = (i.player == 0 ? dadNoteskin : bfNoteskin).length < 1;
 						}
 				}
 				if (ClientPrefs.noteColorStyle == 'Char-Based')
@@ -5052,6 +5038,8 @@ class PlayState extends MusicBeatState
 		if (noteDiff > ClientPrefs.goodWindow && ClientPrefs.shitGivesMiss && ClientPrefs.ratingIntensity == 'Harsh') noteMiss(note);
 		if (noteDiff > ClientPrefs.sickWindow && ClientPrefs.shitGivesMiss && ClientPrefs.ratingIntensity == 'Very Harsh')noteMiss(note);
 	}
+
+	var separatedScore:Array<Dynamic> = [];
 	private function popUpScore(note:Note = null, ?miss:Bool = false):Void
 	{
 		popUpsFrame += 1;
@@ -5109,7 +5097,7 @@ class PlayState extends MusicBeatState
 				var tempCombo:Float = (combo > 0 ? combo : -combo);
 				var tempComboAlt:Float = tempCombo;
 				
-				final separatedScore:Array<Dynamic> = [];
+				separatedScore = [];
 				while(tempCombo >= 10)
 				{
 					separatedScore.unshift(Math.ffloor(tempCombo / 10) % 10);
@@ -5385,7 +5373,6 @@ class PlayState extends MusicBeatState
 			}
 		}
 
-		// FlxG.watch.addQuick('asdfa', upP);
 		var char:Character = boyfriend;
 		if (opponentChart) char = dad;
 		if (startedCountdown && !char.stunned && generatedMusic)
@@ -5582,36 +5569,11 @@ class PlayState extends MusicBeatState
 		{
 			//first, process whether or not the note should be hit. this prevents pointless strum following
 			if (!daNote.mustPress && !daNote.hitByOpponent && !daNote.ignoreNote && daNote.strumTime <= Conductor.songPosition)
-			{
-				if (!ClientPrefs.showcaseMode || ClientPrefs.charsAndBG) opponentNoteHit(daNote);
-				if (ClientPrefs.showcaseMode && !ClientPrefs.charsAndBG)
-				{
-					if (!daNote.isSustainNote) {
-						enemyHits += 1 * polyphony;
-						if (ClientPrefs.showNPS) {
-							oppNotesHitArray.push(1 * polyphony);
-							oppNotesHitDateArray.push(Conductor.songPosition);
-						}
-					}
-					invalidateNote(daNote);
-				}
-			}
+				opponentNoteHit(daNote);
 
 			if(daNote.mustPress) {
-				if((cpuControlled || usingBotEnergy && strumsHeld[daNote.noteData]) && daNote.strumTime <= Conductor.songPosition && !daNote.ignoreNote) {
-					if (!ClientPrefs.showcaseMode || ClientPrefs.charsAndBG) goodNoteHit(daNote);
-					if (ClientPrefs.showcaseMode && !ClientPrefs.charsAndBG)
-					{
-						if (!daNote.isSustainNote) {
-							totalNotesPlayed += 1 * polyphony;
-							if (ClientPrefs.showNPS) {
-								notesHitArray.push(1 * polyphony);
-								notesHitDateArray.push(Conductor.songPosition);
-							}
-						}
-						invalidateNote(daNote);
-					}
-				}
+				if((cpuControlled || usingBotEnergy && strumsHeld[daNote.noteData]) && daNote.strumTime <= Conductor.songPosition && !daNote.ignoreNote)
+					goodNoteHit(daNote);
 			}
 			if (!daNote.exists) return;
 
@@ -5880,7 +5842,7 @@ class PlayState extends MusicBeatState
 				if (daNote.animSuffix.length > 0 && oppChar.hasAnimation(animToPlay + daNote.animSuffix))
 					animToPlay = singAnimations[Std.int(Math.abs(daNote.noteData))] + daNote.animSuffix;
 
-				if (ClientPrefs.cameraPanning) inline camPanRoutine(animToPlay, (!opponentChart ? 'dad' : 'bf'));
+				if (ClientPrefs.cameraPanning) camPanRoutine(animToPlay, (!opponentChart ? 'dad' : 'bf'));
 
 				if (oppChar != null)
 				{
@@ -6198,7 +6160,7 @@ class PlayState extends MusicBeatState
 		if (!ffmpegMode && playbackRate < 256) //much better resync code, doesn't just resync every step!!
 		{
 			var timeSub:Float = Conductor.songPosition - Conductor.offset;
-			var syncTime:Float = 20 * playbackRate;
+			var syncTime:Float = 20 * Math.max(playbackRate, 1);
 			if (Math.abs(FlxG.sound.music.time - timeSub) > syncTime ||
 			(vocals.length > 0 && vocals.time < vocals.length && Math.abs(vocals.time - timeSub) > syncTime) ||
 			(opponentVocals.length > 0 && opponentVocals.time < opponentVocals.length && Math.abs(opponentVocals.time - timeSub) > syncTime))
@@ -6382,24 +6344,6 @@ class PlayState extends MusicBeatState
 				iconP1.scale.set(1.2, 1.2);
 				iconP2.scale.set(1.2, 1.2);
 			}
-			//you're welcome Stefan2008 :)
-			if (ClientPrefs.iconBounceType == 'SB Engine') {
-				if (curBeat % gfSpeed == 0) {
-					if (curBeat % (gfSpeed * 2) == 0) {
-						iconP1.scale.set(0.8, 0.8);
-						iconP2.scale.set(1.2, 1.3);
-
-						iconP1.angle = -15;
-						iconP2.angle = 15;
-					} else {
-						iconP2.scale.set(0.8, 0.8);
-						iconP1.scale.set(1.2, 1.3);
-
-						iconP2.angle = -15;
-						iconP1.angle = 15;
-					}
-				}
-			}
 
 			if (curBeat % gfSpeed == 0 && ClientPrefs.iconBounceType == 'Golden Apple') {
 				curBeat % (gfSpeed * 2) == 0 * playbackRate ? {
@@ -6495,24 +6439,6 @@ class PlayState extends MusicBeatState
 			if (ClientPrefs.iconBounceType == 'New Psych') {
 				if (bopBF) iconP1.scale.set(1.2, 1.2);
 				else iconP2.scale.set(1.2, 1.2);
-			}
-			//you're welcome Stefan2008 :)
-			if (ClientPrefs.iconBounceType == 'SB Engine') {
-				if (iconBopsTotal % 2 == 0) {
-					if (iconBopsTotal % 2 == 0) {
-						iconP1.scale.set(0.8, 0.8);
-						iconP2.scale.set(1.2, 1.3);
-
-						iconP1.angle = -15;
-						iconP2.angle = 15;
-					} else {
-						iconP2.scale.set(0.8, 0.8);
-						iconP1.scale.set(1.2, 1.3);
-
-						iconP2.angle = -15;
-						iconP1.angle = 15;
-					}
-				}
 			}
 			if (ClientPrefs.iconBounceType == 'Golden Apple') {
 				FlxTween.cancelTweensOf(iconP1);

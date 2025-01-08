@@ -44,6 +44,9 @@ to Download the binary for Microsoft Visual Studio with the specific package you
 For getting all the packages you need, distros often have similar or near identical names
 
 for pretty much every distro, install the `git`, `haxe` and `vlc` packages
+> Note: This can probably be skipped if you installed Arch Linux via `archinstall` as it preinstalls vlc ahead of time, but if you still get errors involving LibVLC continue below to the Arch instructions.
+
+> In the event you get this error: `libvlc.so.5: file format not recognized; treating as linker script` and then `libvlc.so.5:0: syntax error` then you need to use HxCodec 3.0.2
 
 Commands will vary depending on your distro, refer to your package manager's install command syntax.
 ### Installation for common Linux distros
@@ -103,5 +106,9 @@ Refer to Issue ShadowMario/FNF-PsychEngine#12770, or use hxCodec 2.5.1.
 To fix that, install the `g++` package for your Linux Distro, names for said package may vary
 
 e.g: Fedora is `gcc-c++`, Gentoo is `sys-devel/gcc`, and so on.
+
+### "I have an error saying ApplicationMain.exe : fatal error LNK1120: 1 unresolved externals!"
+
+Run `lime test cpp -clean` again, or delete the export (more specifically, export/obj) folder and compile again.
 
 ---

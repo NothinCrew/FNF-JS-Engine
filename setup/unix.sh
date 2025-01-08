@@ -4,12 +4,12 @@
 # https://haxe.org/download
 echo Installing dependencies...
 echo This might take a few moments depending on your internet speed.
-haxelib install lime
+haxelib install lime 8.1.3
 haxelib install openfl
-haxelib install flixel
-haxelib install flixel-addons
-haxelib install flixel-tools
-haxelib install flixel-ui	
+haxelib install flixel 5.6.2
+haxelib install flixel-addons 3.2.3
+haxelib install flixel-tools 1.5.1
+haxelib install flixel-ui 2.6.1
 haxelib install hscript
 haxelib install hxcpp-debug-server
 haxelib git away3d https://github.com/moxie-coder/away3d
