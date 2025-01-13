@@ -1,3 +1,5 @@
+# IF YOU'RE SEEING THIS, IT'S BECAUSE IM NOW A OFFICIAL CODER ON JS ENGINE. THIS FORK WILL BE DISCONTINUED.
+
 <!-- this is an secret -->
 <h1 align="center">
   <br>
