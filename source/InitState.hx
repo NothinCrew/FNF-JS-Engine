@@ -14,16 +14,16 @@ class InitState extends FlxState {
         // -- FLIXEL STUFF -- //
 
         FlxG.game.focusLostFramerate = 60;
-		FlxG.sound.muteKeys = funkin.TitleState.muteKeys;
-		FlxG.sound.volumeDownKeys = funkin.TitleState.volumeDownKeys;
-		FlxG.sound.volumeUpKeys = funkin.TitleState.volumeUpKeys;
+		FlxG.sound.muteKeys = TitleState.muteKeys;
+		FlxG.sound.volumeDownKeys = TitleState.volumeDownKeys;
+		FlxG.sound.volumeUpKeys = TitleState.volumeUpKeys;
 		FlxG.keys.preventDefaultKeys = [TAB];
 
         FlxTransitionableState.skipNextTransIn = true;
 
         // -- SETTINGS -- //
 
-		FlxG.save.bind('funkin', funkin.CoolUtil.getSavePath());
+		FlxG.save.bind('funkin', CoolUtil.getSavePath());
 
 		#if (flixel >= "5.0.0")
 		trace('save status: ${FlxG.save.status}');
@@ -31,10 +31,10 @@ class InitState extends FlxState {
 
 		FlxG.fixedTimestep = false;
 
-		funkin.PlayerSettings.init();
+		PlayerSettings.init();
 
         // ClientPrefs.loadDefaultKeys();
-		funkin.ClientPrefs.loadPrefs();
+		ClientPrefs.loadPrefs();
 
         /*
         #if ACHIEVEMNTS_ALLOWED
@@ -45,17 +45,17 @@ class InitState extends FlxState {
         // -- MODS -- //
 
 		#if LUA_ALLOWED
-		funkin.Paths.pushGlobalMods();
+		Paths.pushGlobalMods();
 		#end
 		// Just to load a mod on start up if ya got one. For mods that change the menu music and bg
-		funkin.WeekData.loadTheFirstEnabledMod();
+		WeekData.loadTheFirstEnabledMod();
 
         // -- -- -- //
 
-        funkin.Paths.clearStoredMemory();
-		funkin.Paths.clearUnusedMemory();
+        Paths.clearStoredMemory();
+		Paths.clearUnusedMemory();
 
-        final state:Class<FlxState> = (funkin.ClientPrefs.disableSplash) ? funkin.TitleState : funkin.StartupState;
+        final state:Class<FlxState> = (ClientPrefs.disableSplash) ? TitleState : StartupState;
 
         FlxG.switchState(Type.createInstance(state, []));
     }

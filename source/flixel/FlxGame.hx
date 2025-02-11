@@ -776,7 +776,7 @@ class FlxGame extends Sprite
 				if (FlxG.elapsed > max)
 					FlxG.elapsed = max;
 			}
-			if (Type.getClassName(Type.getClass(FlxG.state)) == 'PlayState' && funkin.ClientPrefs.ffmpegMode) FlxG.elapsed = 1 / funkin.ClientPrefs.targetFPS;
+			if (Type.getClassName(Type.getClass(FlxG.state)) == 'PlayState' && ClientPrefs.ffmpegMode) FlxG.elapsed = 1 / ClientPrefs.targetFPS;
 	}
 
 	function updateInput():Void

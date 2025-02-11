@@ -33,7 +33,7 @@ class StartupState extends MusicBeatState
 			// Finish callback
 			function onVideoEnd()
 			{
-				FlxG.switchState(funkin.TitleState.new);
+				FlxG.switchState(TitleState.new);
 			}
 			vidSprite.finishCallback = (callback != null) ? callback.bind() : onVideoEnd;
 			vidSprite.onSkip = (callback != null) ? callback.bind() : onVideoEnd;
@@ -101,7 +101,7 @@ class StartupState extends MusicBeatState
 			startDelay: fadeDelay,
 			ease: FlxEase.linear,
 			onComplete: function(_) {
-				FlxG.switchState(funkin.TitleState.new);
+				FlxG.switchState(TitleState.new);
 			}
 		});
 	}
@@ -163,7 +163,7 @@ class StartupState extends MusicBeatState
 
 	override function update(elapsed:Float)
 	{
-		if (FlxG.keys.justPressed.ENTER) FlxG.switchState(funkin.TitleState.new);
+		if (FlxG.keys.justPressed.ENTER) FlxG.switchState(TitleState.new);
 		super.update(elapsed);
 	}
 }

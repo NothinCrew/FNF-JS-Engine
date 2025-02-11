@@ -48,7 +48,7 @@ class FPSCounter extends TextField
 	// Event Handlers
 	override function __enterFrame(deltaTime:Float):Void
 	{
-		if (!funkin.ClientPrefs.showFPS) return;
+		if (!ClientPrefs.showFPS) return;
 		now = haxe.Timer.stamp() * 1000;
 		times.push(now);
 		while (times[0] < now - 1000 / fpsMultiplier) times.shift();
@@ -58,9 +58,9 @@ class FPSCounter extends TextField
 			return;
 		}
 
-		if (Std.isOfType(FlxG.state, funkin.PlayState) && !funkin.PlayState.instance.trollingMode)
+		if (Std.isOfType(FlxG.state, PlayState) && !PlayState.instance.trollingMode)
 		{
-			try { fpsMultiplier = funkin.PlayState.instance.playbackRate; }
+			try { fpsMultiplier = PlayState.instance.playbackRate; }
 			catch (e:Dynamic) { fpsMultiplier = 1.0; }
 		}
 		else fpsMultiplier = 1.0;
@@ -70,21 +70,21 @@ class FPSCounter extends TextField
 		currentFPS = Math.min(FlxG.drawFramerate, times.length) / fpsMultiplier;
 		updateText();
 
-		if (funkin.ClientPrefs.rainbowFPS)
+		if (ClientPrefs.rainbowFPS)
 		{
-			timeColor = (timeColor % 360.0) + (1.0 / (funkin.ClientPrefs.framerate / 120));
+			timeColor = (timeColor % 360.0) + (1.0 / (ClientPrefs.framerate / 120));
 			textColor = FlxColor.fromHSB(timeColor, 1, 1);
 		}
-		else if (!funkin.ClientPrefs.ffmpegMode)
+		else if (!ClientPrefs.ffmpegMode)
 		{
 			textColor = 0xFFFFFFFF;
-			if (currentFPS <= funkin.ClientPrefs.framerate / 2 && currentFPS >= funkin.ClientPrefs.framerate / 3)
+			if (currentFPS <= ClientPrefs.framerate / 2 && currentFPS >= ClientPrefs.framerate / 3)
 				textColor = 0xFFFFFF00;
 
-			if (currentFPS <= funkin.ClientPrefs.framerate / 3 && currentFPS >= funkin.ClientPrefs.framerate / 4)
+			if (currentFPS <= ClientPrefs.framerate / 3 && currentFPS >= ClientPrefs.framerate / 4)
 				textColor = 0xFFFF8000;
 
-			if (currentFPS <= funkin.ClientPrefs.framerate / 4)
+			if (currentFPS <= ClientPrefs.framerate / 4)
 				textColor = 0xFFFF0000;
 		}
 		deltaTimeout = 0.0;
@@ -92,12 +92,12 @@ class FPSCounter extends TextField
 
 	public dynamic function updateText():Void   // so people can override it in hscript
 	{
-		text = "FPS: " + (funkin.ClientPrefs.ffmpegMode ? funkin.ClientPrefs.targetFPS : Math.round(currentFPS));
-		if (funkin.ClientPrefs.ffmpegMode)
+		text = "FPS: " + (ClientPrefs.ffmpegMode ? ClientPrefs.targetFPS : Math.round(currentFPS));
+		if (ClientPrefs.ffmpegMode)
 			text += " (Rendering Mode)";
 
-		if (funkin.ClientPrefs.showRamUsage) text += "\nRAM: " + FlxStringUtil.formatBytes(memory) + (funkin.ClientPrefs.showMaxRamUsage ? " / " + FlxStringUtil.formatBytes(mempeak) : "");
-		if (funkin.ClientPrefs.debugInfo)
+		if (ClientPrefs.showRamUsage) text += "\nRAM: " + FlxStringUtil.formatBytes(memory) + (ClientPrefs.showMaxRamUsage ? " / " + FlxStringUtil.formatBytes(mempeak) : "");
+		if (ClientPrefs.debugInfo)
 		{
 			text += '\nState: ${Type.getClassName(Type.getClass(FlxG.state))}';
 			if (FlxG.state.subState != null)

@@ -115,7 +115,7 @@ class Main extends Sprite {
 		SetProcessDPIAware()
 		')
 		#end
-		funkin.CrashHandler.init();
+		CrashHandler.init();
 		setupGame();
 	}
 
@@ -134,8 +134,8 @@ class Main extends Sprite {
 		};
 
 		// #if LUA_ALLOWED Lua.set_callbacks_function(cpp.Callable.fromStaticFunction(psychlua.CallbackHandler.call)); #end
-		funkin.ClientPrefs.loadDefaultStuff();
-		#if ACHIEVEMENTS_ALLOWED funkin.Achievements.load(); #end
+		ClientPrefs.loadDefaultStuff();
+		#if ACHIEVEMENTS_ALLOWED Achievements.load(); #end
 
 		addChild(new FlxGame(game.width, game.height, game.initialState, #if (flixel < "5.0.0") game.zoom, #end game.framerate, game.framerate, game.skipSplash, game.startFullscreen));
 
@@ -143,7 +143,7 @@ class Main extends Sprite {
 		addChild(fpsVar);
 
 		if (fpsVar != null) {
-			fpsVar.visible = funkin.ClientPrefs.showFPS;
+			fpsVar.visible = ClientPrefs.showFPS;
 		}
 
 		#if (!web && flixel < "5.5.0")

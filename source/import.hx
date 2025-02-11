@@ -1,5 +1,5 @@
 #if !macro
-import funkin.Paths;
+import Paths;
 import haxe.ds.Vector as HaxeVector; //apparently denpa uses vectors, which is required for camera panning i guess
 
 #if sys
@@ -20,7 +20,7 @@ import flxanimate.PsychFlxAnimate as FlxAnimate;
 #end
 
 //so that it doesn't bring up a "Type not found: Countdown"
-import funkin.BaseStage.Countdown;
+import BaseStage.Countdown;
 
 //Flixel
 import flixel.sound.FlxSound;

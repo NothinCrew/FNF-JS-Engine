@@ -44,7 +44,7 @@ class VideoSprite extends FlxSpriteGroup {
 
 		// initialize sprites
 		videoSprite = new FlxVideoSprite();
-		videoSprite.antialiasing = funkin.ClientPrefs.globalAntialiasing;
+		videoSprite.antialiasing = ClientPrefs.globalAntialiasing;
 		videoSprite.autoPause = autoPause;
 		add(videoSprite);
 		if(canSkip) this.canSkip = true;
@@ -104,7 +104,7 @@ class VideoSprite extends FlxSpriteGroup {
 	{
 		if(canSkip)
 		{
-			if(funkin.Controls.instance != null && funkin.Controls.instance.ACCEPT_P)
+			if(Controls.instance != null && Controls.instance.ACCEPT_P)
 			{
 				holdingTime = Math.max(0, Math.min(_timeToSkip, holdingTime + elapsed));
 			}
