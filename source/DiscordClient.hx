@@ -26,13 +26,13 @@ class DiscordClient
 
 	public static function check()
 	{
-		if(ClientPrefs.discordRPC) initialize();
+		if(funkin.ClientPrefs.discordRPC) initialize();
 		else if(isInitialized) shutdown();
 	}
 	
 	public static function prepare()
 	{
-		if (!isInitialized && ClientPrefs.discordRPC)
+		if (!isInitialized && funkin.ClientPrefs.discordRPC)
 			initialize();
 
 		Application.current.window.onClose.add(function() {
@@ -113,7 +113,7 @@ class DiscordClient
 		presence.details = details;
 		presence.smallImageKey = smallImageKey;
 		presence.largeImageKey = largeImageKey;
-		presence.largeImageText = "Engine Version: " + MainMenuState.psychEngineJSVersion;
+		presence.largeImageText = "Engine Version: " + funkin.MainMenuState.psychEngineJSVersion;
 		// Obtained times are in milliseconds so they are divided so Discord can use it
 		presence.startTimestamp = Std.int(startTimestamp / 1000);
 		presence.endTimestamp = Std.int(endTimestamp / 1000);

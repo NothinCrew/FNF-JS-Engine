@@ -951,7 +951,7 @@ import lime.math.Vector2;
 
 		VideoTexture does not contain mipmaps. If VideoTexture is used with a sampler
 		that uses mip map filtering or repeat wrapping, the drawTriangles call will fail.
-		VideoTexture can be treated as BGRA texture by the shaders. The attempt to
+		VideoTexture can be treated as BGRA texture by the funkin.shaders. The attempt to
 		instantiate the VideoTexture Object will fail if the Context3D was requested
 		with sotfware rendering mode.
 

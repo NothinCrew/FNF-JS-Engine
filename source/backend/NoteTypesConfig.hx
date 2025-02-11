@@ -1,6 +1,6 @@
 package backend;
 
-import Note;
+import funkin.Note;
 
 using StringTools;
 
@@ -25,7 +25,7 @@ class NoteTypesConfig
 		if(str == null || !str.contains(':') || !str.contains('=')) noteTypesData.set(name, null);
 
 		var parsed:Array<NoteTypeProperty> = [];
-		var lines:Array<String> = CoolUtil.listFromString(str);
+		var lines:Array<String> = funkin.CoolUtil.listFromString(str);
 		for (line in lines)
 		{
 			var sep:Int = line.indexOf(':');

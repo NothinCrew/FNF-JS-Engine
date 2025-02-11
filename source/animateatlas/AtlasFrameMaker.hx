@@ -43,7 +43,7 @@ class AtlasFrameMaker extends FlxFramesCollection
 
 		if (Paths.fileExists('images/$key/spritemap1.json', TEXT))
 		{
-			PlayState.instance.addTextToDebug("Only Spritemaps made with Adobe Animate 2018 are supported", FlxColor.RED);
+			funkin.PlayState.instance.addTextToDebug("Only Spritemaps made with Adobe Animate 2018 are supported", FlxColor.RED);
 			trace("Only Spritemaps made with Adobe Animate 2018 are supported");
 			return null;
 		}
@@ -93,7 +93,7 @@ class AtlasFrameMaker extends FlxFramesCollection
 			{
 				sizeInfo = t.getBounds(t);
 				var bitmapShit:BitmapData = new BitmapData(Std.int(sizeInfo.width + sizeInfo.x), Std.int(sizeInfo.height + sizeInfo.y), true, 0);
-				if (ClientPrefs.cacheOnGPU)
+				if (funkin.ClientPrefs.cacheOnGPU)
 				{
 					var texture:openfl.display3D.textures.RectangleTexture = FlxG.stage.context3D.createRectangleTexture(bitmapShit.width, bitmapShit.height, BGRA, true);
 					texture.uploadFromBitmapData(bitmapShit);
