@@ -3189,9 +3189,7 @@ class PlayState extends MusicBeatState
 		stagesFunc(function(stage:BaseStage) stage.closeSubState());
 		if (paused)
 		{
-			if (FlxG.sound.music != null && !startingSong && !ffmpegMode)
-			{
-				resyncVocals();
+			if (FlxG.sound.music != null && !startingSong && !ffmpegMode) { resyncVocals();
 			}
 
 			FlxTimer.globalManager.forEach(function(tmr:FlxTimer) if(!tmr.finished) tmr.active = true);
@@ -3487,20 +3485,15 @@ class PlayState extends MusicBeatState
 			if (oppNPS > maxOppNPS) {
 				maxOppNPS = oppNPS;
 			}
-			if (nps > maxNPS) {
-				maxNPS = nps;
-			}
-			if (nps > oldNPS)
-				npsIncreased = true;
+			if (nps > maxNPS) {  maxNPS = nps;	}
 
-			if (nps < oldNPS)
-				npsDecreased = true;
+			if (nps > oldNPS) npsIncreased = true;
 
-			if (oppNPS > oldOppNPS)
-				oppNpsIncreased = true;
+			if (nps < oldNPS) npsDecreased = true;
 
-			if (oppNPS < oldOppNPS)
-				oppNpsDecreased = true;
+			if (oppNPS > oldOppNPS) oppNpsIncreased = true;
+
+			if (oppNPS < oldOppNPS) oppNpsDecreased = true;
 
 			if (npsIncreased || npsDecreased || oppNpsIncreased || oppNpsDecreased) {
 				if (ClientPrefs.ratingCounter && judgeCountUpdateFrame <= 8 && judgementCounter != null) updateRatingCounter();
