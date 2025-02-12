@@ -3471,20 +3471,14 @@ class PlayState extends MusicBeatState
 				}
 			}
 
-			if (oppNotesToRemoveCount > 0) {
-				oppNotesHitDateArray.splice(0, oppNotesToRemoveCount);
-				oppNotesHitArray.splice(0, oppNotesToRemoveCount);
-				if (ClientPrefs.ratingCounter && judgeCountUpdateFrame <= 4 && judgementCounter != null) updateRatingCounter();
-			}
-
+			if (oppNotesToRemoveCount > 0) { oppNotesHitDateArray.splice(0, oppNotesToRemoveCount); oppNotesHitArray.splice(0, oppNotesToRemoveCount); if (ClientPrefs.ratingCounter && judgeCountUpdateFrame <= 4 && judgementCounter != null) updateRatingCounter(); }
+			
 			oppNPS = 0;
-			for (value in oppNotesHitArray) {
-				oppNPS += value;
-			}
 
-			if (oppNPS > maxOppNPS) {
-				maxOppNPS = oppNPS;
-			}
+			for (value in oppNotesHitArray) { oppNPS += value; }
+
+			if (oppNPS > maxOppNPS) { maxOppNPS = oppNPS; }
+
 			if (nps > maxNPS) {  maxNPS = nps;	}
 
 			if (nps > oldNPS) npsIncreased = true;
