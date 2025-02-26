@@ -60,6 +60,7 @@ class TitleState extends MusicBeatState
 	public static var sarcasmEgg:String;
 	public var inCutscene:Bool = false;
 	var canPause:Bool = true;
+	var date:Date = Date.now();
 
 	final sarcasmKeys:Array<String> = [
 		'ANNOUNCER'
@@ -119,9 +120,11 @@ class TitleState extends MusicBeatState
     				// Extract the changelog after the version number
     				returnedData[1] = data.substring(versionEndIndex + 1, data.length);
 				updateVersion = returnedData[0];
-				var curVersion:String = MainMenuState.psychEngineJSVersion.trim();
-				trace('version online: ' + updateVersion + ', your version: ' + curVersion);
-				if(updateVersion != curVersion) {
+				final curVersion:String = MainMenuState.psychEngineJSVersion.trim();
+				final cleanVersion:String = curVersion.split(" (")[0]; // Removes everything after " ("
+				trace(cleanVersion);
+				trace('version online: ' + updateVersion + ', your version: ' + cleanVersion);
+				if(updateVersion != cleanVersion) {
 					trace('versions arent matching!');
 					OutdatedState.currChanges = returnedData[1];
 					mustUpdate = true;
@@ -251,7 +254,12 @@ class TitleState extends MusicBeatState
 	{
 		if (!initialized)
 		{
-			if(FlxG.sound.music == null) {
+			if (date.getMonth() == 4 && date.getDate() == 1)
+			{
+				FlxG.sound.playMusic(Paths.music('aprilFools'), 0);
+			}
+			else if(FlxG.sound.music == null)
+			{
 				FlxG.sound.playMusic(Paths.music('freakyMenu-' + ClientPrefs.daMenuMusic), 0);
 			}
 		}

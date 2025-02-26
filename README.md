@@ -66,7 +66,7 @@ Frequently Asked Questions (FAQs) are found in [here](https://github.com/JordanS
 
 **Q: Can I use this engine for my mod(s)?**
 
-A: Yes, you can! just be sure to credit me ([@JordanSantiago on YouTube](https://www.youtube.com/@JordanSantiago)) and give a link to this page. or [the link to download the latest release.](https://github.com/JordanSantiagoYT/FNF-JS-Engine/releases/latest)
+A: Yes, you can! just be sure to credit me ([@JordanSantiago on YouTube](https://www.youtube.com/@JordanSantiago)) and give a link to the Engine's github/gamebanana, or [the link to download the latest release.](https://github.com/JordanSantiagoYT/FNF-JS-Engine/releases/latest)
 
 **Q: How do I change and add things?**
 
@@ -84,11 +84,7 @@ A: Send [here.](https://github.com/JordanSantiagoYT/FNF-JS-Engine/pulls)
 
 Refer to [the Build Instructions](./BUILDING.md)
 
-If you get an error related to hxCodec, run `haxelib set hxCodec 2.5.1` if you're using an older version BEFORE 1.42.0
-
-### Otherwise, make *sure* you use HxVLC 1.9.2, not anything newer
-
-If graphics are all white and don't have color, run `haxelib git hxcpp https://github.com/HaxeFoundation/hxcpp`
+If you get an error while Compiling, go [here](https://github.com/JordanSantiagoYT/FNF-JS-Engine/issues/359) to see if the issue is on there, if not, make an issue
 
 ## Customization:
 
@@ -106,8 +102,7 @@ same goes for *Lua Scripts*, comment out or delete the line with `LUA_ALLOWED`, 
 - He's the owner... What do you think?
 
 @TheStinkern
-- Was originaly going to only answer issues and try to fix it.
-  - Also trying to learn haxe a bit.
+- Small coder
 
 @moxie-coder
 - Codes part of the engine
